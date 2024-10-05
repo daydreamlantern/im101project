@@ -67,7 +67,7 @@ const Header = ({ onNavClick }) => (
             <Link to="/services" className="nav-link">SERVICES</Link>
             <Link to="/login" className="nav-link">LOGIN</Link> 
         </nav>
-        <Link to="/create">
+        <Link to="/services-barber">
             <button className="create">BOOK APPOINTMENT</button>
         </Link> 
     </header>

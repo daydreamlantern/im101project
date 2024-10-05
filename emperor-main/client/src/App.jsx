@@ -7,23 +7,34 @@ import CreateBook from './CreateBook';
 import BookingDone from './BookingDone';
 import Login from './login';
 import CustBook from './custbook';
-import Payments from './payments'
-
+import Payments from './payments';
+import ServicesBarber from './ServicesBarber';
+import CustomerDetails from './CustomerDetails';
+import TimeDatePayment from './TimeDatePayment';
+import { BookingProvider } from './BookingContext';
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/admin" element={<Books />} />
-        <Route path="/create" element={<CreateBook />} /> {/* Removed Layout */}
-        <Route path="/booking-done" element={<BookingDone />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/custbook" element={<CustBook />} />
-        <Route path="/payments" element={<Payments />} />
+    <BookingProvider>
+      <Router>
+        <Routes>
+          {/* Original routes */}
+          <Route path="/" element={<Homepage />} />
+          <Route path="/admin" element={<Books />} />
+          <Route path="/create" element={<CreateBook />} />
+          <Route path="/booking-done" element={<BookingDone />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/custbook" element={<CustBook />} />
+          <Route path="/payments" element={<Payments />} />
 
-      </Routes>
-    </Router>
+          {/* New booking process routes */}
+          <Route path="/services-barber" element={<ServicesBarber />} />
+          <Route path="/customer-details" element={<CustomerDetails />} />
+          <Route path="/time-date-payment" element={<TimeDatePayment />} />
+          <Route path="/booking-done" element={<BookingDone />} />
+        </Routes>
+      </Router>
+    </BookingProvider>
   );
 };
 

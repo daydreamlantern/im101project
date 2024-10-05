@@ -56,16 +56,19 @@ app.get('/', (req, res) => {
 });
 
 // POST route to create a new booking (with email notification)
-app.post('/create', (req, res) => {
+app.post('/submit-booking', (req, res) => {
     const { name, service, date, time, paymentMethod, email } = req.body;
 
     console.log("Received booking request:", req.body);
+
+    // Convert the date to YYYY-MM-DD format
+    const formattedDate = format(new Date(date), 'yyyy-MM-dd');
 
     // Check if the time slot is already booked for the selected date
     const checkSql = "SELECT * FROM book WHERE date = ? AND time = ?";
     const timeIn24h = convertTimeTo24Hour(time); // Convert the time to 24-hour format
 
-    db.query(checkSql, [date, timeIn24h], (err, results) => {
+    db.query(checkSql, [formattedDate, timeIn24h], (err, results) => {
         if (err) {
             console.error("Error checking availability:", err);
             return res.json({ Error: "Error checking availability" });
@@ -77,7 +80,7 @@ app.post('/create', (req, res) => {
 
         // If not booked, insert the new booking
         const sql = "INSERT INTO book (name, service, date, time, paymentMethod, email) VALUES (?, ?, ?, ?, ?, ?)";
-        const values = [name, service, date, timeIn24h, paymentMethod, email];
+        const values = [name, service, formattedDate, timeIn24h, paymentMethod, email];
         db.query(sql, values, (err, data) => {
             if (err) {
                 console.error("Error inserting data:", err);
@@ -89,7 +92,7 @@ app.post('/create', (req, res) => {
                 from: process.env.EMAIL_USER,
                 to: email,
                 subject: 'Booking Confirmation',
-                text: `Dear ${name},\n\nYour booking for ${service} on ${date} at ${time} has been confirmed.\n\nThank you for choosing us!\n\nBest regards,\nYour Barbershop`,
+                text: `Dear ${name},\n\nYour booking for ${service} on ${formattedDate} at ${time} has been confirmed.\n\nThank you for choosing us!\n\nBest regards,\nYour Barbershop`,
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
@@ -104,43 +107,24 @@ app.post('/create', (req, res) => {
     });
 });
 
-// DELETE route to delete a book by ID
-app.delete('/delete/:id', (req, res) => {
-    const id = req.params.id;
-    const deleteQuery = "DELETE FROM book WHERE id = ?";
-
-    db.query(deleteQuery, [id], (err, data) => {
-        if (err) {
-            console.error("Error deleting data:", err);
-            return res.json({ Error: "Error deleting data" });
-        }
-        return res.json({ message: "Booking deleted successfully" });
-    });
-});
-
 // POST route to get booked times for a specific date
 app.post('/booked-times', (req, res) => {
-    const { date } = req.body;
+    const { date } = req.body; // Extract date from request body
+    console.log("Received request for booked times:", date);
 
-    const sql = "SELECT time FROM book WHERE date = ?";
-    db.query(sql, [date], (err, data) => {
+    const sql = "SELECT time FROM book WHERE date = ?"; // SQL query to select times for the given date
+    db.query(sql, [date], (err, results) => {
         if (err) {
-            console.error("Error retrieving booked times:", err);
-            return res.json({ Error: "Error retrieving booked times" });
+            console.error("Error fetching booked times:", err);
+            return res.status(500).json({ Error: "Error fetching booked times" });
         }
-
-        // Return an array of booked times for the selected date
-        const bookedTimes = data.map((booking) => booking.time);
-        return res.json(bookedTimes);
+        
+        // Extract the booked times from the results
+        const bookedTimes = results.map(row => row.time);
+        return res.json(bookedTimes); // Send back the booked times
     });
 });
 
-// Start the Express server
-app.listen(3030, () => {
-    console.log("Server running on port 3030");
-});
-
-// POST route for admin login
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
@@ -151,7 +135,7 @@ app.post('/login', (req, res) => {
             console.error("Database error:", err); // Log the error
             return res.status(500).json({ error: 'Database error' });
         }
-        
+
         if (results.length === 0) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
@@ -163,4 +147,10 @@ app.post('/login', (req, res) => {
 
         return res.json({ message: 'Login successful' });
     });
+})
+
+// Start the server
+const PORT = process.env.PORT || 3030;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
