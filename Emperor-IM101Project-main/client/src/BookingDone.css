@@ -18,21 +18,21 @@
 
 .booking-done-header {
     font-size: 24px;
-    color: #FFD700; /* Gold color for header */
+    color: #d9a23d; /* Gold color for header */
     font-weight: bold;
     margin-bottom: 20px;
 }
 
 .booking-done-message {
     font-size: 18px;
-    color: #FFD700; /* Gold color for message text */
+    color: #d9a23d; /* Gold color for message text */
     margin-bottom: 20px; /* Space below the message */
 }
 
 .done-button {
     padding: 10px 20px;
-    background-color: #FFD700; /* Gold color for button */
-    color: #000; /* Black text color for contrast */
+    background-color: #d9a23d; /* Gold color for button */
+    color: #ffffff; /* Black text color for contrast */
     border: none;
     border-radius: 5px;
     font-size: 18px;
@@ -41,7 +41,8 @@
 }
 
 .done-button:hover {
-    background-color: #FFC107; /* Darker gold on hover */
+    background-color: #d9a23d; /* Darker gold on hover */
+    color: #ffffff;
 }
 
 @media (max-width: 768px) {

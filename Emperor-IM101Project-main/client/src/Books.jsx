@@ -4,18 +4,20 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Books.css'; // Add custom styles here
 
-
 const Books = () => {
-    const [books, setBooks] = useState([]);
+    const [customers, setCustomers] = useState([]);
     const navigate = useNavigate(); // Initialize useNavigate
 
+    // Fetch customer data from backend
     useEffect(() => {
-        axios.get('http://localhost:3030').then((res) => setBooks(res.data)).catch(console.log);
+        axios.get('http://localhost:3030/') // Adjust the endpoint to fetch customers
+            .then((res) => setCustomers(res.data)) // Ensure this matches your actual API response
+            .catch(console.log);
     }, []);
 
     const handleDelete = (id) => {
-        axios.delete(`http://localhost:3030/delete/${id}`)
-            .then(() => setBooks(books.filter((book) => book.id !== id)))
+        axios.delete(`http://localhost:3030/customers/delete/${id}`)
+            .then(() => setCustomers(customers.filter((customer) => customer.id !== id)))
             .catch(console.log);
     };
 
@@ -57,34 +59,28 @@ const Books = () => {
                             <table className="table table-striped">
                                 <thead className="thead-dark">
                                     <tr>
-                                        <th>ID</th>
+                                        <th>Customer ID</th>
                                         <th>Name</th>
-                                        <th>Service</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                        <th>Payment Method</th>
-                                        <th>Email</th>
+                                        <th>Contact No</th>
+                                        <th>Email Address</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {books.length > 0 ? (
-                                        books.map((book) => (
-                                            <tr key={book.id}>
-                                                <td>{book.id}</td>
-                                                <td>{book.name}</td>
-                                                <td>{book.service}</td>
-                                                <td>{new Date(book.date).toLocaleDateString()}</td>
-                                                <td>{book.time}</td>
-                                                <td>{book.paymentMethod}</td>
-                                                <td>{book.email}</td>
+                                    {customers.length > 0 ? (
+                                        customers.map((customer) => (
+                                            <tr key={customer.customerID}>
+                                            <td>{customer.customerID}</td>
+                                            <td>{customer.name}</td>
+                                            <td>{customer.contactNo}</td>
+                                            <td>{customer.email}</td>
                                                 <td>
-                                                    <button className="btn btn-danger" onClick={() => handleDelete(book.id)}>Delete</button>
+                                                    <button className="btn btn-danger" onClick={() => handleDelete(customer.id)}>Delete</button>
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
-                                        <tr><td colSpan="8">No Records</td></tr>
+                                        <tr><td colSpan="5">No Records</td></tr>
                                     )}
                                 </tbody>
                             </table>

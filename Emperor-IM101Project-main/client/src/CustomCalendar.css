@@ -55,12 +55,12 @@
 }
 
 .day.selected {
-    background-color: #007bff; /* Bright blue for selected */
+    background-color: #d9a23d; /* Bright blue for selected */
     color: white;
 }
 
 .day.today {
-    background-color: #ffca28; /* Yellow for today */
+    background-color:#d9a23d; /* Yellow for today */
 }
 
 .day.disabled {
